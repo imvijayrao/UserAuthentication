@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.userauth</groupId>
 	<artifactId>userauthenticate</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>userauthenticate</name>
 	<description>User authentication project for Spring Boot</description>
 	<properties>
@@ -60,6 +60,10 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
 		</dependency>
 	</dependencies>
 

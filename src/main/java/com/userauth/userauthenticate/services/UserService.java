@@ -1,10 +1,14 @@
 package com.userauth.userauthenticate.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.userauth.userauthenticate.dtos.SendEmailMessageDto;
 import com.userauth.userauthenticate.model.Token;
 import com.userauth.userauthenticate.model.User;
 import com.userauth.userauthenticate.repository.TokenRepository;
 import com.userauth.userauthenticate.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,9 @@ import java.util.UUID;
 public class UserService {
 
     @Autowired
+    private KafkaTemplate kafkaTemplate;
+
+    @Autowired
     private UserRepository userrepos;
 
     @Autowired
@@ -24,12 +31,31 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     public User signup(String email, String password, String name){
         User user = new User();
         user.setEmail(email);
         user.setName(name);
         user.setPassword(bCryptPasswordEncoder.encode(password));
-        return userrepos.save(user);
+        User savedUser = userrepos.save(user);
+
+        SendEmailMessageDto messageDto = new SendEmailMessageDto();
+        messageDto.setFrom("");
+        messageDto.setTo(email);
+        messageDto.setSubject("Welcome to Scaler");
+        messageDto.setBody("Hi! Good to have you onboard, Looking forward on your achievements.");
+
+        try {
+            kafkaTemplate.send("sendEmail",
+                    objectMapper.writeValueAsString(messageDto));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return savedUser;
     }
 
     public Token login(String email, String password) {
