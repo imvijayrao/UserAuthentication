@@ -3,6 +3,7 @@ package com.userauth.userauthenticate.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.userauth.userauthenticate.dtos.SendEmailMessageDto;
+import com.userauth.userauthenticate.exceptions.UserNotFoundException;
 import com.userauth.userauthenticate.model.Token;
 import com.userauth.userauthenticate.model.User;
 import com.userauth.userauthenticate.repository.TokenRepository;
@@ -111,6 +112,15 @@ public class UserService {
         Optional<Token> tokenOptional = tokenrepos.findByValueAndDeletedEqualsAndExpireAtGreaterThan(token, false, new Date());
         if (tokenOptional.isEmpty()) {
             return false;
+        }
+        return true;
+    }
+
+    public boolean validateEmail(String email) {
+        Optional<User> userOptional = userrepos.findByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User with email " + email + " doesn't exist");
         }
         return true;
     }

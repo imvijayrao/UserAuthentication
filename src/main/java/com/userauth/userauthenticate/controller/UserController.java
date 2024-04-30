@@ -5,6 +5,7 @@ import com.userauth.userauthenticate.dtos.SignupRequestDto;
 import com.userauth.userauthenticate.model.Token;
 import com.userauth.userauthenticate.model.User;
 import com.userauth.userauthenticate.services.UserService;
+import jakarta.ws.rs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -33,9 +34,14 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("validateToken/{token}")
+    @PostMapping("/validateToken/{token}")
     public boolean validate(@PathVariable("token") String token){
         return userservice.validateToken(token);
+    }
+
+    @GetMapping("/validateEmail/{email}")
+    public boolean getuseremail(@PathVariable("email") String email){
+        return userservice.validateEmail(email);
     }
 
 }
