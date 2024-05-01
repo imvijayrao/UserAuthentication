@@ -116,12 +116,9 @@ public class UserService {
         return true;
     }
 
-    public boolean validateEmail(String email) {
+    public Boolean validateEmail(String email) {
         Optional<User> userOptional = userrepos.findByEmail(email);
 
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User with email " + email + " doesn't exist");
-        }
-        return true;
+        return userOptional.isPresent();
     }
 }
